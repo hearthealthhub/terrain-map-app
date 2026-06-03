@@ -119,6 +119,25 @@ button.secondary {
   color: #e9f2ff;
 }
 
+.maplibregl-popup {
+  max-width: 320px;
+}
+
+.maplibregl-popup-content {
+  background: rgba(173, 216, 230, 0.18);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #f8fbff;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 14px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+  padding: 10px 12px;
+}
+
+.maplibregl-popup-tip {
+  border-top-color: rgba(173, 216, 230, 0.18) !important;
+}
+
 button:hover {
   filter: brightness(1.05);
 }

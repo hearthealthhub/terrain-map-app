@@ -108,47 +108,51 @@ map.on('load', () => {
     data: emptyFeatureCollection()
   });
 
-  map.loadImage(makeWaypointMarkerDataUrl(), (error, image) => {
-    if (error) throw error;
-    if (!map.hasImage('waypoint-marker')) {
-      map.addImage('waypoint-marker', image, { pixelRatio: 2 });
+  map.addLayer({
+    id: 'route-line',
+    type: 'line',
+    source: 'route',
+    filter: ['==', ['geometry-type'], 'LineString'],
+    paint: {
+      'line-color': '#ffd400',
+      'line-width': 4,
+      'line-opacity': 0.95
     }
+  });
 
-    map.addLayer({
-      id: 'route-line',
-      type: 'line',
-      source: 'route',
-      filter: ['==', ['geometry-type'], 'LineString'],
-      paint: {
-        'line-color': '#ffd400',
-        'line-width': 4,
-        'line-opacity': 0.95
-      }
-    });
+  map.addLayer({
+    id: 'route-points',
+    type: 'circle',
+    source: 'route',
+    filter: ['==', ['geometry-type'], 'Point'],
+    paint: {
+      'circle-radius': 7,
+      'circle-color': '#ff3b30',
+      'circle-stroke-width': 2,
+      'circle-stroke-color': '#ffffff'
+    }
+  });
 
-    map.addLayer({
-      id: 'route-points',
-      type: 'symbol',
-      source: 'route',
-      filter: ['==', ['geometry-type'], 'Point'],
-      layout: {
-        'icon-image': 'waypoint-marker',
-        'icon-size': 0.7,
-        'icon-anchor': 'bottom',
-        'text-field': ['get', 'label'],
-        'text-size': 12,
-        'text-offset': [0, -3.4],
-        'text-anchor': 'bottom',
-        'text-font': ['Open Sans Semibold'],
-        'text-allow-overlap': true,
-        'icon-allow-overlap': true,
-        'text-max-width': 14
-      },
-      paint: {
-        'text-color': '#f7fbff',
-        'text-halo-color': 'rgba(0, 0, 0, 0)'
-      }
-    });
+  map.addLayer({
+    id: 'route-labels',
+    type: 'symbol',
+    source: 'route',
+    filter: ['==', ['geometry-type'], 'Point'],
+    layout: {
+      'text-field': ['get', 'label'],
+      'text-size': 12,
+      'text-offset': [0, 1.7],
+      'text-anchor': 'top',
+      'text-font': ['Open Sans Semibold'],
+      'text-allow-overlap': true,
+      'text-max-width': 14
+    },
+    paint: {
+      'text-color': '#ffffff',
+      'text-halo-color': 'rgba(15, 23, 42, 0.82)',
+      'text-halo-width': 6,
+      'text-halo-blur': 0.6
+    }
   });
 });
 
@@ -341,23 +345,6 @@ function getCurrentRoutePoints() {
       lat: feature.geometry.coordinates[1],
       label: feature.properties.label
     }));
-}
-
-function makeWaypointMarkerDataUrl() {
-  const svg = encodeURIComponent(`
-    <svg xmlns="http://www.w3.org/2000/svg" width="80" height="108" viewBox="0 0 80 108">
-      <defs>
-        <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-          <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="rgba(0,0,0,0.28)"/>
-        </filter>
-      </defs>
-      <g filter="url(#shadow)">
-        <path d="M40 104C40 104 64 68.5 64 45C64 23.46 53.25 10 40 10S16 23.46 16 45c0 23.5 24 59 24 59Z" fill="#ff3b30" stroke="#ffffff" stroke-width="4"/>
-        <circle cx="40" cy="45" r="10" fill="#ffffff" opacity="0.96"/>
-      </g>
-    </svg>
-  `);
-  return `data:image/svg+xml;charset=utf-8,${svg}`;
 }
 
 function appendResolved(point, order) {
